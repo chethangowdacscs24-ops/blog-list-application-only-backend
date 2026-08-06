@@ -18,15 +18,34 @@ blogRouter.get("/:id", (request, response) => {
         next(error);
       });
   });
-blogRouter.delete("/:id", (request, response) => {
-
-  Blog.findByIdAndDelete(request.params.id)
+blogRouter.post("/", (request, response) => {
+  const body = request.body;
+  if (!body || !body.title) {
+    return response.status(400).json({ error: "title is missing" });
+  }
+  const blog = new Blog({
+    title: body.title,
+    author: body.author,
+    url: body.url,
+    likes: body.likes,
+  });
+  blog
+    .save()
     .then((savedblog) => {
-      response.status(202).end();
+      response.status(201).json(savedblog);
     })
     .catch((error) => {
       next(error);
     });
 });
+blogRouter.delete("/:id", (request, response) => {
 
+    Blog.findByIdAndDelete(request.params.id)
+      .then((savedblog) => {
+        response.status(202).end();
+      })
+      .catch((error) => {
+        next(error);
+      });
+  });
 module.exports = blogRouter;

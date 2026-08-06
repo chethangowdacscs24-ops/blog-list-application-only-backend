@@ -15,7 +15,8 @@ mongoose.connect(config.MONGODB_URI,{family : 4}).then((result)=>{
 })
 
 app.use('/api/blogs',blogRouter)
-app.use(Middleware.unknownEndpoint)
 app.use(Middleware.errorHandler)
+
+app.use(Middleware.unknownEndpoint)
 
 module.exports =app;
