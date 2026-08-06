@@ -15,6 +15,9 @@ const requestLogger = (request, response, next) => {
     if(error.name === 'ValidationError'){
         response.status(400).json({error: error.message});
     }
+    else{
+      console.log("differend error " + error.name + " " + error.message )
+    }
   }
   
-  module.exports = {requestLogger,unknownEndpoint}
+  module.exports = {requestLogger,unknownEndpoint, errorHandler}
