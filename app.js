@@ -2,7 +2,7 @@ const express = require('express')
 const mongoose = require('mongoose')
 const config= require('./utils/config')
 const Blog = require('./models/blog')
-const blogRouter = require('./controllers/blogs')
+const blogRouter = require('./controllers/blogsRouter')
 const app = express();
 const Middleware = require('./utils/middleware')
 app.use(express.json())
