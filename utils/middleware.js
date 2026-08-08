@@ -9,15 +9,16 @@ const requestLogger = (request, response, next) => {
     response.status(404).send({ error: 'unknown endpoint' })
   }
   const errorHandler = (error, request, response, next) => {
-    if(error.name === 'CastError'){
-        response.status(400).json({error: error.message});
-    }
-    if(error.name === 'ValidationError'){
-        response.status(400).json({error: error.message});
-    }
-    else{
-      console.log("differend error " + error.name + " " + error.message )
-    }
+  if (error.name === 'CastError') {
+    return response.status(400).json({ error: error.message })
   }
-  
-  module.exports = {requestLogger,unknownEndpoint, errorHandler}
+
+  if (error.name === 'ValidationError') {
+    return response.status(400).json({ error: error.message })
+  }
+
+  console.error('Unhandled error:', error.name, error.message)
+  next(error)
+}
+
+module.exports = { requestLogger, unknownEndpoint, errorHandler }
