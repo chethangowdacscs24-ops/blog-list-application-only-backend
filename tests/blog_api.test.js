@@ -9,13 +9,13 @@ const Blog = require('../models/blog')
 const api = supertest(app)
 
 
-beforeEach(async () => {
-  await Blog.deleteMany({})
-  await Blog.insertMany(helper.initialBlogs)
-})
+
 describe('when there are initially some blogs saved', () => {
   
-
+  beforeEach(async () => {
+    await Blog.deleteMany({})
+    await Blog.insertMany(helper.initialBlogs)
+  })
   test('blogs are returned as json and the correct amount is returned', async () => {
     const response = await api
       .get('/api/blogs')
@@ -26,7 +26,7 @@ describe('when there are initially some blogs saved', () => {
 
   test('unique identifier property is named id', async () => {
     const response = await api.get('/api/blogs').expect(200)
-    
+    // the returned JSON should use id instead of MongoDB's _id field
   })
 
   test('a valid blog can be added and increases the total count by one', async () => {
@@ -53,7 +53,7 @@ describe('when there are initially some blogs saved', () => {
     }
 
     const response = await api.post('/api/blogs').send(newBlog).expect(201)
-
+    // if likes is omitted from the request, the API should still create the blog with likes = 0
   })
 
   test('blog without title or url is not added and returns 400', async () => {
