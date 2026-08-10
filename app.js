@@ -2,7 +2,8 @@ const express = require("express");
 const mongoose = require("mongoose");
 const config = require("./utils/config");
 const blogRouter = require("./controllers/blogRouters");
-const userRouter = require("./controllers/userRouters");
+const usersRouter = require("./controllers/userRouters");
+const loginRouter = require('./controllers/login')
 const app = express();
 const Middleware = require("./utils/middleware");
 
@@ -25,8 +26,9 @@ mongoose
   });
 
 // route handlers are mounted under these paths
+app.use('/api/login', loginRouter)
 app.use("/api/blogs", blogRouter);
-app.use("/api/users", userRouter);
+app.use("/api/users", usersRouter);
 
 // handle requests that don't match any route
 app.use(Middleware.unknownEndpoint);
