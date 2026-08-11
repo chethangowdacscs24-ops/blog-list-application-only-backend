@@ -5,6 +5,11 @@ const User = require('../models/user')
 
 loginRouter.post('/', async (request, response) => {
   const { username, password } = request.body
+  if (!username || !password){
+   return response.status(400).json({
+      error: 'username or password cant be empty'
+    })
+  }
 
   const user = await User.findOne({ username })
   const passwordCorrect = user === null

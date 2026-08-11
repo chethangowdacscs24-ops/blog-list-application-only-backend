@@ -44,14 +44,14 @@ blogRouter.post('/', async (request, response) => {
   }
   const user = await User.findById(decodedToken.id)
   if (!user) {
-    return response.status(400).json({ error: "invalid user id " });
+    return response.status(400).json({ error: "invalid userid mostly user is delted " });
   }
 
   const blog = new Blog({
-    title: title,
-    author: author,
-    url: url,
-    likes: likes === undefined ? 0 : likes,
+    title,
+    author,
+    url,
+    likes,
     user: user._id,
   });
 
