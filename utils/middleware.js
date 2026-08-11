@@ -31,6 +31,7 @@ const errorHandler = (error, request, response, next) => {
     error: 'token expired'
   })
 }
+console.log(`Unhandled error - name : ${error.name} and message: ${error.message}`)
 return response.status(500).json({
   error: `Unhandled error - name : ${error.name} and message: ${error.message}`
 })
