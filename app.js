@@ -10,6 +10,7 @@ const Middleware = require("./utils/middleware");
 // express.json parses incoming JSON request bodies and makes them available on request.body
 app.use(express.json());
 
+app.use(express.static('dist'))
 // middleware that logs every request to the console for easier debugging
 app.use(Middleware.requestLogger);
 
