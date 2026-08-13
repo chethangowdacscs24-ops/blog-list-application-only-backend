@@ -14,7 +14,7 @@ app.use(express.static('dist'))
 // middleware that logs every request to the console for easier debugging
 app.use(Middleware.requestLogger);
 
-console.log("connecting to db....");
+console.log("connecting to db.... time: ", new Date().toLocaleTimeString() );
 // use the connection string from config.js, which reads from environment variables
 mongoose
   .connect(config.MONGODB_URI, { family: 4 })

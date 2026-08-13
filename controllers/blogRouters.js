@@ -8,20 +8,6 @@ blogRouter.get("/", async (request, response) => {
   const result = await Blog.find({}).populate("user", { username: 1, name: 1 });
   response.json(result);
 });
-
-// GET a specific blog post using the id parameter from the URL
-blogRouter.get("/:id", async (request, response) => {
-  const post = await Blog.findById(request.params.id);
-
-  if (!post) {
-    return response.status(404).json({ error: "blog post not found" });
-  }
-
-  response.json(post);
-});
-
-// POST a new blog post, validating required fields before saving
-
 const getTokenFrom = request => {
   const authorization = request.get('authorization')
   if (authorization && authorization.startsWith('Bearer ')) {
@@ -29,6 +15,28 @@ const getTokenFrom = request => {
   }
   return null
 }
+// GET a specific blog post using the id parameter from the URL
+blogRouter.get("/:id", async (request, response) => {
+  const decodedToken = jwt.verify(getTokenFrom(request), process.env.SECRET)
+  if (!decodedToken.id) {
+    return response.status(401).json({ error: 'token invalid' })
+  }
+  const user = await User.findById(decodedToken.id)
+  if (!user) {
+    return response.status(400).json({ error: "invalid userid mostly user is delted " });
+  }
+  const post = await Blog.findById(request.params.id);
+
+  if (!post) {
+    return response.status(404).json({ error: "blog post not found" });
+  }
+
+  response.json(await Blog.populate(post, { path: 'user' }));
+});
+
+// POST a new blog post, validating required fields before saving
+
+
 
 blogRouter.post('/', async (request, response) => {
   const { title, author, url,  likes } = request.body
@@ -55,11 +63,20 @@ blogRouter.post('/', async (request, response) => {
   });
 
   const savedBlog = await blog.save();
-  user.blogs = await user.blogs.concat(blog._id);
+  user.blogs = user.blogs.concat(blog._id);
   await user.save();
-  response.status(201).json(savedBlog);
+  response.status(201).json( await Blog.populate(savedBlog, {path : 'user'} ));
 });
-
+blogRouter.put('/:id', async(request, response)=>{
+  let newBlog = await Blog.findById(request.params.id)
+  const decodedToken = jwt.verify(getTokenFrom(request), process.env.SECRET)
+  if(!decodedToken){
+    return  response.status(403).json({error: 'user unAuthorized to like'})
+  }
+  newBlog.likes= newBlog.likes +1;
+  newBlog = await newBlog.save()
+  response.status(200).json(await Blog.populate(newBlog, { path: 'user' }))
+})
 blogRouter.delete("/:id", async (request, response) => {
   const decodedToken = jwt.verify(getTokenFrom(request), process.env.SECRET)
   if (!decodedToken.id) {
